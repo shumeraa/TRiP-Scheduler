@@ -18,13 +18,7 @@ const config: Config = {
   plugins: [require("daisyui")],
   daisyui: {
     themes: [
-      "night",
-      "retro",
-      "emerald",
-      "dim",
-      "autumn",
-      "forest",
-      "synthwave",
+      "lofi",
     ],
   },
 };

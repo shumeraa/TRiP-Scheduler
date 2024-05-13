@@ -39,7 +39,6 @@ function startNextJsServer() {
 }
 
 function startFlaskServer() {
-  // Adjust the path and commands according to your project setup
   flaskServerProcess = spawn("pipenv", ["run", "python", "server.py"], {
     cwd: "../server",
     shell: true,
@@ -54,6 +53,15 @@ function startFlaskServer() {
   });
 }
 
+function stopServers() {
+  if (nextServerProcess !== null) {
+    kill(nextServerProcess.pid);
+  }
+  if (flaskServerProcess !== null) {
+    kill(flaskServerProcess.pid);
+  }
+}
+
 app.whenReady().then(() => {
   startNextJsServer();
   startFlaskServer();
@@ -61,12 +69,7 @@ app.whenReady().then(() => {
 });
 
 app.on("window-all-closed", () => {
-  if (nextServerProcess !== null) {
-    kill(nextServerProcess.pid);
-  }
-  if (flaskServerProcess !== null) {
-    kill(flaskServerProcess.pid);
-  }
+  stopServers();
   if (process.platform !== "darwin") {
     app.quit();
   }
@@ -78,11 +81,4 @@ app.on("activate", () => {
   }
 });
 
-app.on("quit", () => {
-  if (nextServerProcess !== null) {
-    kill(nextServerProcess.pid);
-  }
-  if (flaskServerProcess !== null) {
-    kill(flaskServerProcess.pid);
-  }
-});
+app.on("quit", stopServers);
