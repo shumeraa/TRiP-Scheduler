@@ -345,23 +345,25 @@ const App = () => {
         })
       }
       />
-
+    <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}> 
       <DataTable value={tripData} sortMode="multiple" filters={filters}
       paginator
       rows={10}
       rowsPerPageOptions={[10,20,30]}
-      className="table table-sm table-zebra"
+      className="table table-sm "
       header={tripheader}
       footer={tripfooter}
+      style={{width: '80%'}} 
       >
         <Column field="trip_id" header="Trip ID" sortable></Column>
         <Column field="name" header="Name" sortable></Column>
         <Column field="category" header="Category" sortable></Column>
-        <Column field="start_date" header="Start Date" sortable></Column>
-        <Column field="end_date" header="End Date" sortable></Column>
+        <Column field="start_date" header="Start Date"></Column>
+        <Column field="end_date" header="End Date"></Column>
         <Column field="lead_guides_needed" header="Lead Guides Needed" sortable></Column>
         <Column field="total_guides_needed" header="Total Guides Needed" sortable></Column>
       </DataTable>
+      </div> 
       </div>
 
       <div className='mt-5 App'>
@@ -376,7 +378,7 @@ const App = () => {
       }
       />
 
-      <div className="overflow-x-auto">
+      <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}> 
       <DataTable value={tripLeaderData} sortMode="multiple" filters={filters}
       paginator
       rows={10}
@@ -384,6 +386,7 @@ const App = () => {
       className="table table-sm table-zebra"
       header={leadheader}
       footer={leadfooter}
+      style={{width: '80%'}} 
       >
       <Column field="id" header="ID" sortable></Column>
       <Column field="name" header="Name" sortable></Column>
@@ -414,6 +417,7 @@ const App = () => {
       }
       />
 
+      <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}> 
       <DataTable value={tripPreferenceData} sortMode="multiple" filters={filters}
       paginator
       rows={10}
@@ -421,11 +425,15 @@ const App = () => {
       className="table table-sm table-zebra"
       header={prefheader}
       footer={preffooter}
+      style={{width: '80%'}} 
       >
       <Column field="trip_leader_id" header="Trip Leader ID" sortable></Column>
+      <Column field="trip_leader_name" header="Name" sortable></Column>
       <Column field="trip_id" header="Trip ID" sortable></Column>
+      <Column field="trip_name" header="Name" sortable></Column>
       <Column field="preference" header="Preference" sortable></Column>
       </DataTable>
+      </div>
       </div>
       </div>
       <div className="mt-10"></div>
