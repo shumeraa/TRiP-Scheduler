@@ -1,84 +1,77 @@
-const { app, BrowserWindow } = require("electron");
-const { spawn } = require("child_process");
-const kill = require("tree-kill");
+const { app, BrowserWindow } = require('electron');
+const path = require('path');
+const { exec } = require('child_process');
 
 let mainWindow;
-let nextServerProcess = null;
-let flaskServerProcess = null;
+let backendProcess;
 
 function createWindow() {
-  mainWindow = new BrowserWindow({
-    width: 800,
-    height: 600,
-    webPreferences: {
-      nodeIntegration: true,
-    },
-  });
+    mainWindow = new BrowserWindow({
+        width: 800,
+        height: 600,
+        webPreferences: {
+            preload: path.join(__dirname, 'preload.js'),
+            nodeIntegration: true
+        }
+    });
 
-  const NEXT_URL = "http://localhost:3000";
-  mainWindow.loadURL(NEXT_URL);
+    // Load the React app
+    mainWindow.loadURL('http://localhost:3000');
 
-  mainWindow.on("closed", () => {
-    mainWindow = null;
-  });
+    mainWindow.on('closed', function () {
+        mainWindow = null;
+    });
 }
 
-function startNextJsServer() {
-  nextServerProcess = spawn("npm", ["run", "dev"], {
-    cwd: "../client",
-    shell: true,
-  });
+app.on('ready', () => {
+    // Start the Flask backend
+    backendProcess = exec('pipenv run python server.py', { cwd: path.join(__dirname, 'server') });
 
-  nextServerProcess.stdout.on("data", (data) => {
-    console.log(`Next.js: ${data}`);
-  });
+    backendProcess.stdout.on('data', (data) => {
+        console.log(`Backend: ${data}`);
+    });
 
-  nextServerProcess.stderr.on("data", (data) => {
-    console.error(`Next.js error: ${data}`);
-  });
-}
+    backendProcess.stderr.on('data', (data) => {
+        console.error(`Backend error: ${data}`);
+    });
 
-function startFlaskServer() {
-  flaskServerProcess = spawn("pipenv", ["run", "python", "server.py"], {
-    cwd: "../server",
-    shell: true,
-  });
+    backendProcess.on('close', (code) => {
+        console.log(`Backend process exited with code ${code}`);
+    });
 
-  flaskServerProcess.stdout.on("data", (data) => {
-    console.log(`Flask: ${data}`);
-  });
+    // Start the React frontend
+    const frontendProcess = exec('npm start', { cwd: path.join(__dirname, 'client') });
 
-  flaskServerProcess.stderr.on("data", (data) => {
-    console.error(`Flask error: ${data}`);
-  });
-}
+    frontendProcess.stdout.on('data', (data) => {
+        console.log(`Frontend: ${data}`);
+    });
 
-function stopServers() {
-  if (nextServerProcess !== null) {
-    kill(nextServerProcess.pid);
-  }
-  if (flaskServerProcess !== null) {
-    kill(flaskServerProcess.pid);
-  }
-}
+    frontendProcess.stderr.on('data', (data) => {
+        console.error(`Frontend error: ${data}`);
+    });
 
-app.whenReady().then(() => {
-  startNextJsServer();
-  startFlaskServer();
-  createWindow();
-});
+    frontendProcess.on('close', (code) => {
+        console.log(`Frontend process exited with code ${code}`);
+    });
 
-app.on("window-all-closed", () => {
-  stopServers();
-  if (process.platform !== "darwin") {
-    app.quit();
-  }
-});
-
-app.on("activate", () => {
-  if (BrowserWindow.getAllWindows().length === 0) {
     createWindow();
-  }
 });
 
-app.on("quit", stopServers);
+app.on('window-all-closed', function () {
+    if (process.platform !== 'darwin') {
+        app.quit();
+    }
+});
+
+app.on('activate', function () {
+    if (mainWindow === null) {
+        createWindow();
+    }
+});
+
+app.on('will-quit', () => {
+    // Ensure the backend process is terminated when Electron quits
+    if (backendProcess) {
+        backendProcess.kill();
+    }
+});
