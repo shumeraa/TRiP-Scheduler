@@ -27,7 +27,7 @@ function Menu() {
         <ul tabIndex={0} className={`dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52 ${isOpen ? 'block' : 'hidden'}`}>
           {items.map((item) => (
             <li key={item}>
-              <a href={`/schedules/${item.toLowerCase()}`} className="block px-4 py-2 text-normal">
+              <a href={`/schedules/${item.toLowerCase()}`} className="block px-4 py-2 text-normal text-black">
                 {item.charAt(0).toUpperCase() + item.slice(1)} {/* Capitalize first letter */}
               </a>
             </li>

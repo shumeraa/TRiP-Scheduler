@@ -40,16 +40,20 @@ const App = () => {
   const [endDateMonth, setEndDateMonth] = useState('');
   const [endDateDay, setEndDateDay] = useState('');
   const [showInvalidNumberAlert, setShowInvalidNumberInput] = useState(false);
+  const [tripsFilter, setTripsFilter] = useState({}); 
+  const [tripLeaderFilter, setTripLeaderFilter] = useState({}); 
 
-  const keywordSearch = (
+
+
+  const KeywordSearch = ({ setFilter }) => (
     <div className="table-header">
       <h5 className="mx-0 my-1">Keyword Search</h5>
       <span className="p-input-icon-left">
         <i className="pi pi-search" />
         <InputText 
           type="search" 
-          className="input input-bordered input-secondary input-sm max-w-xs" // Apply your custom class here
-          onInput={(e) => setFilters({
+          className="input input-bordered input-secondary input-sm max-w-xs"
+          onInput={(e) => setFilter({ 
             global: {value: e.target.value, matchMode: FilterMatchMode.CONTAINS},
           })} 
           placeholder="Search..." 
@@ -57,6 +61,9 @@ const App = () => {
       </span>
     </div>
   );
+
+  const tripKeywordSearch = <KeywordSearch setFilter={setTripsFilter} />;
+  const tripLeaderKeywordSearch = <KeywordSearch setFilter={setTripLeaderFilter} />;
 
   const fetchData = async () => {
     try {
@@ -352,11 +359,9 @@ const App = () => {
     </details>
       {/* End of the "Edit trip" join section, start displaying data */}
       <div className='mt-5 App'>
-
-      <h1 className='text-xs font-bold mb-1 ml-2'>Filter: </h1>
       
     <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}> 
-      <DataTable value={tripData} sortMode="multiple" filters={filters}
+      <DataTable value={tripData} sortMode="multiple" filters={tripsFilter}
       paginator
       rows={10}
       rowsPerPageOptions={[10,20,30]}
@@ -364,7 +369,7 @@ const App = () => {
       header={tripheader}
       footer={tripfooter}
       style={{width: '80%'}} 
-      header={keywordSearch}
+      header={tripKeywordSearch}
       >
         <Column field="trip_id" header="Trip ID" sortable></Column>
         <Column field="name" header="Name" sortable></Column>
@@ -379,18 +384,8 @@ const App = () => {
 
       <div className='mt-5 App'>
 
-      <h1 className='text-xs font-bold mb-1 ml-2'>Filter: </h1>
-      <InputText 
-      className="ml-1 input input-bordered input-secondary input-sm max-w-xs"
-      onInput={(e) => 
-      setFilters({
-        global: {value: e.target.value, matchMode: FilterMatchMode.CONTAINS},
-      })
-      }
-      />
-
       <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}> 
-      <DataTable value={tripLeaderData} sortMode="multiple" filters={filters}
+      <DataTable value={tripLeaderData} sortMode="multiple" filters={tripLeaderFilter}
       paginator
       rows={10}
       rowsPerPageOptions={[10,20,30]}
@@ -398,6 +393,7 @@ const App = () => {
       header={leadheader}
       footer={leadfooter}
       style={{width: '80%'}} 
+      header={tripLeaderKeywordSearch}
       >
       <Column field="id" header="ID" sortable></Column>
       <Column field="name" header="Name" sortable></Column>
