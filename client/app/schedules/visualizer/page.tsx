@@ -41,6 +41,23 @@ const App = () => {
   const [endDateDay, setEndDateDay] = useState('');
   const [showInvalidNumberAlert, setShowInvalidNumberInput] = useState(false);
 
+  const keywordSearch = (
+    <div className="table-header">
+      <h5 className="mx-0 my-1">Keyword Search</h5>
+      <span className="p-input-icon-left">
+        <i className="pi pi-search" />
+        <InputText 
+          type="search" 
+          className="input input-bordered input-secondary input-sm max-w-xs" // Apply your custom class here
+          onInput={(e) => setFilters({
+            global: {value: e.target.value, matchMode: FilterMatchMode.CONTAINS},
+          })} 
+          placeholder="Search..." 
+        />
+      </span>
+    </div>
+  );
+
   const fetchData = async () => {
     try {
       setLoading(true); // Set loading to true at the beginning of the fetch
@@ -336,15 +353,8 @@ const App = () => {
       {/* End of the "Edit trip" join section, start displaying data */}
       <div className='mt-5 App'>
 
-      <h1 className='text-xs font-bold mb-1 ml-2'>Search and Filter: </h1>
-      <InputText 
-      className="ml-1 input input-bordered input-secondary input-sm max-w-xs"
-      onInput={(e) => 
-        setFilters({
-          global: {value: e.target.value, matchMode: FilterMatchMode.CONTAINS},
-        })
-      }
-      />
+      <h1 className='text-xs font-bold mb-1 ml-2'>Filter: </h1>
+      
     <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}> 
       <DataTable value={tripData} sortMode="multiple" filters={filters}
       paginator
@@ -354,6 +364,7 @@ const App = () => {
       header={tripheader}
       footer={tripfooter}
       style={{width: '80%'}} 
+      header={keywordSearch}
       >
         <Column field="trip_id" header="Trip ID" sortable></Column>
         <Column field="name" header="Name" sortable></Column>
@@ -368,7 +379,7 @@ const App = () => {
 
       <div className='mt-5 App'>
 
-      <h1 className='text-xs font-bold mb-1 ml-2'>Search and Filter: </h1>
+      <h1 className='text-xs font-bold mb-1 ml-2'>Filter: </h1>
       <InputText 
       className="ml-1 input input-bordered input-secondary input-sm max-w-xs"
       onInput={(e) => 
@@ -383,7 +394,7 @@ const App = () => {
       paginator
       rows={10}
       rowsPerPageOptions={[10,20,30]}
-      className="table table-sm table-zebra"
+      className="table table-sm"
       header={leadheader}
       footer={leadfooter}
       style={{width: '80%'}} 
@@ -407,7 +418,7 @@ const App = () => {
 
       <div className='mt-5 App'>
 
-      <h1 className='text-xs font-bold mb-1 ml-2'>Search and Filter: </h1>
+      <h1 className='text-xs font-bold mb-1 ml-2'>Filter: </h1>
       <InputText 
       className="ml-1 input input-bordered input-secondary input-sm max-w-xs"
       onInput={(e) => 
@@ -422,7 +433,7 @@ const App = () => {
       paginator
       rows={10}
       rowsPerPageOptions={[10,20,30]}
-      className="table table-sm table-zebra"
+      className="table table-sm"
       header={prefheader}
       footer={preffooter}
       style={{width: '80%'}} 
@@ -462,7 +473,6 @@ const App = () => {
   
   );
 };
-
 
 
 export default App;
