@@ -56,7 +56,7 @@ import { fetchData, resetDatabase, sendDataToBackend } from './utils/api';
       />
       
       <div className="mt-10"></div>
-      <div className="flex justify-center pt-4">
+      <div className="flex justify-center pt-2">
       <button className="btn btn-outline text-xl mb-5" onClick={() => {
     resetDatabase();
     populateTablesWithNewData();

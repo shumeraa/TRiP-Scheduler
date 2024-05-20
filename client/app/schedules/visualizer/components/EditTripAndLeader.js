@@ -24,12 +24,12 @@ const EditTripAndLeader = ({ tripData, tripLeaderData, populateTablesWithNewData
   } = useValidation(); 
 
   return (
-    <details className="collapse bg-base-200">
+    <details className="collapse bg-base-200 collapse-arrow">
       <summary className="collapse-title text-l font-medium text-center">Click to Edit Rows</summary>
       <div className="collapse-content"> 
         <div className="flex justify-center">
           <div style={{ fontSize: '15px' }}> 
-            Leave fields blank if you do not want to change their value :)
+            Leave fields blank if you do not want to change their value
           </div>
         </div>
         <div className="join justify-start items-center space-x-2 p-6">
@@ -166,7 +166,7 @@ const EditTripAndLeader = ({ tripData, tripLeaderData, populateTablesWithNewData
         </div>
       </div>
 
-      <div className="min-h-screen flex flex-col justify-between">
+      <div className="flex flex-col justify-between">
     <footer style={{ position: 'fixed', bottom: 0, width: '100%', textAlign: 'center' }}>
     {showInvalidNumberAlert && (
       <div role="alert" className="alert alert-error mt-2">

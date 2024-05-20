@@ -33,7 +33,7 @@ const TripPreferenceDataTable = ({ tripPreferenceData}) => {
 );
 
   return (
-    <div className='mt-5 App'>
+    <div className='mt-5 App pb-12'>
       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
         <DataTable 
           value={tripPreferenceData} 
