@@ -13,22 +13,24 @@ const [filters, setFilters] = useState({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
   });
 
-const header = (
+  const header = (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
-        {leadheader}
+        <div style={{ borderBottom: '2px solid black', marginBottom: '10px' }}>
+            {leadheader}
+        </div>
         <div style={{ display: 'flex', alignItems: 'center', marginTop: '10px' }}>
-        <h1 className='text-xs font-bold mb-1 mr-2'>Filter: </h1>
-        <InputText 
-            className="ml-1 input input-bordered input-secondary input-sm max-w-xs"
-            onInput={(e) => 
-            setFilters({
-                global: { value: e.target.value, matchMode: FilterMatchMode.CONTAINS },
-            })
-            }
-        />
+            <h1 className='text-xs font-bold mb-1 mr-2'>Filter: </h1>
+            <InputText 
+                className="ml-1 input input-bordered input-secondary input-sm max-w-xs"
+                onInput={(e) => 
+                setFilters({
+                    global: { value: e.target.value, matchMode: FilterMatchMode.CONTAINS },
+                })
+                }
+            />
         </div>
     </div>
-    );
+);
 
   return (
     <div className='mt-5 App'>
@@ -49,7 +51,6 @@ const header = (
           <Column field="name" header="Name" sortable></Column>
           <Column field="class_year" header="Class Year" sortable></Column>
           <Column field="semesters_left" header="Semesters Left" sortable></Column>
-          <Column field="num_trips_assigned" header="Num Trips Assigned" sortable></Column>
           <Column field="preferred_co_leaders" header="Preferred Co-Leaders" sortable></Column>
           <Column field="reliability_score" header="Reliability Score" sortable></Column>
           <Column field="mountain_biking_role" header="Mountain Biking Roll" sortable></Column>

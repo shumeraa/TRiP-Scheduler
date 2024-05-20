@@ -15,20 +15,22 @@ const TripPreferenceDataTable = ({ tripPreferenceData}) => {
 
   const header = (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
-      {prefheader}
-      <div style={{ display: 'flex', alignItems: 'center', marginTop: '10px' }}>
-        <h1 className='text-xs font-bold mb-1 mr-2'>Filter: </h1>
-        <InputText 
-          className="ml-1 input input-bordered input-secondary input-sm max-w-xs"
-          onInput={(e) => 
-            setFilters({
-              global: { value: e.target.value, matchMode: FilterMatchMode.CONTAINS },
-            })
-          }
-        />
-      </div>
+        <div style={{ borderBottom: '2px solid black', marginBottom: '10px' }}>
+            {prefheader}
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', marginTop: '10px' }}>
+            <h1 className='text-xs font-bold mb-1 mr-2'>Filter: </h1>
+            <InputText 
+                className="ml-1 input input-bordered input-secondary input-sm max-w-xs"
+                onInput={(e) => 
+                setFilters({
+                    global: { value: e.target.value, matchMode: FilterMatchMode.CONTAINS },
+                })
+                }
+            />
+        </div>
     </div>
-  );
+);
 
   return (
     <div className='mt-5 App'>

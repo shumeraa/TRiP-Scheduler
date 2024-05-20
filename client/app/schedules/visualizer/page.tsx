@@ -1,12 +1,5 @@
 "use client";
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import Link from 'next/link';
-import { PrimeReactProvider, PrimeReactContext } from 'primereact/api';
-import { DataTable } from 'primereact/datatable';
-import { Column } from 'primereact/column';
-import { FilterMatchMode } from 'primereact/api';
-import { InputText } from 'primereact/inputtext';
 import TripDataTable from './components/TripDataTable';
 import TripLeaderDataTable from './components/TripLeaderDataTable';
 import TripPreferenceDataTable from './components/TripPreferenceDataTable';
@@ -20,14 +13,7 @@ import { fetchData, resetDatabase, sendDataToBackend } from './utils/api';
     const [tripData, setTripData] = useState([]);
     const [tripLeaderData, setTripLeaderData] = useState([]);
     const [tripPreferenceData, setTripPreferenceData] = useState([]);
-
-  
-
-  
-
-  
-   
-  
+    
     // Initial fetch on component mount
     useEffect(() => {
       fetchData(setLoading, setTripData, setTripLeaderData, setTripPreferenceData);
