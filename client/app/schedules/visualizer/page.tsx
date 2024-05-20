@@ -7,198 +7,61 @@ import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { FilterMatchMode } from 'primereact/api';
 import { InputText } from 'primereact/inputtext';
+import TripDataTable from './components/TripDataTable';
+import TripLeaderDataTable from './components/TripLeaderDataTable';
+import TripPreferenceDataTable from './components/TripPreferenceDataTable';
+import { fetchData, resetDatabase, sendDataToBackend } from './utils/api';
+import { useValidation } from './utils/validateInputs';
 
-
-const App = () => {
-    //table display variables
+  const App = () => {
+    // Table display variables
     const [isLoading, setLoading] = useState(true);
     const [tripData, setTripData] = useState([]);
     const [tripLeaderData, setTripLeaderData] = useState([]);
     const [tripPreferenceData, setTripPreferenceData] = useState([]);
     const [filters, setFilters] = useState({
-        global: {value: null, matchMode: FilterMatchMode.CONTAINS},
+      global: { value: null, matchMode: FilterMatchMode.CONTAINS },
     });
 
+    const {
+      showInvalidNumberAlert,
+      validateNumInput,
+      validateYear,
+      validateMonth,
+      validateDay,
+      validateTripName,
+    } = useValidation();
+  
     const tripheader = <h1 className="mb-5 text-3xl text-center font-bold">Trip Data</h1>;
     const tripfooter = <p className='ml-1'>Total Trips: {tripData ? tripData.length : 0}</p>;
-
+  
     const leadheader = <h1 className="mb-5 text-3xl text-center font-bold">Trip Leader Data</h1>;
     const leadfooter = <p className='ml-1'>Total Leaders: {tripLeaderData ? tripLeaderData.length : 0}</p>;
-
+  
     const prefheader = <h1 className="mb-5 text-3xl text-center font-bold">Trip Preference Data</h1>;
-    const preffooter = <p className='ml-1'>Total Prefrences: {tripPreferenceData ? tripPreferenceData.length : 0}</p>;
-
-//edit data variables 
-  const [classYear, setClassYear] = useState('');
-  const [semestersLeft, setSemestersLeft] = useState('');
-  const [numTripsAssigned, setNumTripsAssigned] = useState('');
-  const [tripName, setTripName] = useState('');
-  const [startDateYear, setStartDateYear] = useState('');
-  const [startDateMonth, setStartDateMonth] = useState('');
-  const [startDateDay, setStartDateDay] = useState('');
-  const [endDateYear, setEndDateYear] = useState('');
-  const [endDateMonth, setEndDateMonth] = useState('');
-  const [endDateDay, setEndDateDay] = useState('');
-  const [showInvalidNumberAlert, setShowInvalidNumberInput] = useState(false);
-  const [tripsFilter, setTripsFilter] = useState({}); 
-  const [tripLeaderFilter, setTripLeaderFilter] = useState({}); 
-
-
-
-  const KeywordSearch = ({ setFilter }) => (
-    <div className="table-header">
-      <h5 className="mx-0 my-1">Keyword Search</h5>
-      <span className="p-input-icon-left">
-        <i className="pi pi-search" />
-        <InputText 
-          type="search" 
-          className="input input-bordered input-secondary input-sm max-w-xs"
-          onInput={(e) => setFilter({ 
-            global: {value: e.target.value, matchMode: FilterMatchMode.CONTAINS},
-          })} 
-          placeholder="Search..." 
-        />
-      </span>
-    </div>
-  );
-
-  const tripKeywordSearch = <KeywordSearch setFilter={setTripsFilter} />;
-  const tripLeaderKeywordSearch = <KeywordSearch setFilter={setTripLeaderFilter} />;
-
-  const fetchData = async () => {
-    try {
-      setLoading(true); // Set loading to true at the beginning of the fetch
-      const response = await axios.get('http://localhost:5000/get-data');
-      const data = response.data;
-
-      // separate data into individual arrays
-      const { trip, trip_leader, trip_preference } = data;
-      setTripData(trip);
-      setTripLeaderData(trip_leader);
-      setTripPreferenceData(trip_preference);
-
-      setLoading(false);
-    } catch (error) {
-      console.error('Error fetching data:', error);
-      setLoading(false);
-    }
-  };
-
-  function resetDatabase() {
-    fetch('http://localhost:5000/reset-database', { // Adjust the URL based on your Flask server address and port
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-    })
-    .then(response => response.json())
-    .then(data => {
-      if (data.success) {
-        alert('Database has been reset successfully!');
-      } else {
-        alert('Failed to reset the database.');
-      }
-    })
-    .catch(error => {
-      console.error('Error:', error);
-    });
-  }
-
-  // Initial fetch on component mount
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  const populateTablesWithNewData = () => {
-    fetchData();
-  };
-
-  const validateNumInput = (setFieldValue) => (e) => {
-    const value = e.target.value;
-    const semesterValue = parseInt(value, 10);
-    
-    if (value == '' || (!Number.isNaN(semesterValue) && (semesterValue >= 0 && semesterValue < 20))) {
-      setShowInvalidNumberInput(false); // Hide error message if input is valid
-    } else {
-      setShowInvalidNumberInput(true); // Show error message
-      setFieldValue(''); // Resets the input if out of bounds
-    }
-  };
-
-  const validateYear = (setFieldValue) => (e) => {
-    const value = e.target.value;
-    const monthValue = parseInt(value, 10);
-    
-    if (value == '' || (!Number.isNaN(monthValue) && (monthValue >= 2000 && monthValue < 2100))) {
-      setShowInvalidNumberInput(false); // Hide error message if input is valid
-    } else {
-      setShowInvalidNumberInput(true); // Show error message
-      setFieldValue(''); // Resets the input if out of bounds
-    }
-  };
-
-  const validateMonth = (setFieldValue) => (e) => {
-    const value = e.target.value;
-    const monthValue = parseInt(value, 10);
-    
-    if (value == '' || (!Number.isNaN(monthValue) && (monthValue >= 0 && monthValue < 13))) {
-      setShowInvalidNumberInput(false); // Hide error message if input is valid
-    } else {
-      setShowInvalidNumberInput(true); // Show error message
-      setFieldValue(''); // Resets the input if out of bounds
-    }
-  };
-
-  const validateDay = (setFieldValue) => (e) => {
-    const value = e.target.value;
-    const monthValue = parseInt(value, 10);
-    
-    if (value == '' || (!Number.isNaN(monthValue) && (monthValue >= 0 && monthValue < 32))) {
-      setShowInvalidNumberInput(false); // Hide error message if input is valid
-    } else {
-      setShowInvalidNumberInput(true); // Show error message
-      setFieldValue(''); // Resets the input if out of bounds
-    }
-  };
-
-  const validateTripName = (setFieldValue) => (e) => {
-    const value = e.target.value;    
-    if (value == '' || value.length < 50 && /^[a-zA-Z ]+$/.test(value)) {
-      // 1. The input is an empty string, OR
-      // 2. The string is shorter than 20 characters and contains only letters.
-      setShowInvalidNumberInput(false); // Hide error message if input is valid
-    } else {
-      setShowInvalidNumberInput(true); // Show error message
-      setFieldValue(''); // Resets the input if out of bounds
-    }
-  };
-
-
-  const sendDataToBackend = () => {
-    let dataToSend = {};
-    const selects = document.querySelectorAll('select');
-    selects.forEach(select => {
-      // Assuming you want to use the ID as the key
-      if (select.id) dataToSend[select.id] = select.value;
-    });
-    const textInputs = document.querySelectorAll('input[type="text"]');
-    textInputs.forEach((input: HTMLInputElement) => {
-      // Using placeholder as key; ensure placeholders are unique or consider a different attribute
-      if (input.placeholder) dataToSend[input.placeholder] = input.value;
-    });
-    fetch('http://localhost:5000/api/modifyLeader', { // Update port if your Flask app runs on a different one
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(dataToSend),
-    })
-    .then(response => response.json())
-    .then(data => alert(JSON.stringify(data)))
-    .catch(error => console.error('Error:', error));
-  };
-
-
+    const preffooter = <p className='ml-1'>Total Preferences: {tripPreferenceData ? tripPreferenceData.length : 0}</p>;
+  
+    // Edit data variables
+    const [classYear, setClassYear] = useState('');
+    const [semestersLeft, setSemestersLeft] = useState('');
+    const [numTripsAssigned, setNumTripsAssigned] = useState('');
+    const [tripName, setTripName] = useState('');
+    const [startDateYear, setStartDateYear] = useState('');
+    const [startDateMonth, setStartDateMonth] = useState('');
+    const [startDateDay, setStartDateDay] = useState('');
+    const [endDateYear, setEndDateYear] = useState('');
+    const [endDateMonth, setEndDateMonth] = useState('');
+    const [endDateDay, setEndDateDay] = useState('');
+  
+    // Initial fetch on component mount
+    useEffect(() => {
+      fetchData(setLoading, setTripData, setTripLeaderData, setTripPreferenceData);
+    }, []);
+  
+    const populateTablesWithNewData = () => {
+      fetchData(setLoading, setTripData, setTripLeaderData, setTripPreferenceData);
+    };
+  
   if (isLoading) return <p>Loading...</p>;
 
   return (
@@ -358,90 +221,27 @@ const App = () => {
       </div>
     </details>
       {/* End of the "Edit trip" join section, start displaying data */}
-      <div className='mt-5 App'>
-      
-    <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}> 
-      <DataTable value={tripData} sortMode="multiple" filters={tripsFilter}
-      paginator
-      rows={10}
-      rowsPerPageOptions={[10,20,30]}
-      className="table table-sm "
-      header={tripheader}
-      footer={tripfooter}
-      style={{width: '80%'}} 
-      header={tripKeywordSearch}
-      >
-        <Column field="trip_id" header="Trip ID" sortable></Column>
-        <Column field="name" header="Name" sortable></Column>
-        <Column field="category" header="Category" sortable></Column>
-        <Column field="start_date" header="Start Date"></Column>
-        <Column field="end_date" header="End Date"></Column>
-        <Column field="lead_guides_needed" header="Lead Guides Needed" sortable></Column>
-        <Column field="total_guides_needed" header="Total Guides Needed" sortable></Column>
-      </DataTable>
-      </div> 
-      </div>
 
-      <div className='mt-5 App'>
-
-      <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}> 
-      <DataTable value={tripLeaderData} sortMode="multiple" filters={tripLeaderFilter}
-      paginator
-      rows={10}
-      rowsPerPageOptions={[10,20,30]}
-      className="table table-sm"
-      header={leadheader}
-      footer={leadfooter}
-      style={{width: '80%'}} 
-      header={tripLeaderKeywordSearch}
-      >
-      <Column field="id" header="ID" sortable></Column>
-      <Column field="name" header="Name" sortable></Column>
-      <Column field="class_year" header="Class Year" sortable></Column>
-      <Column field="semesters_left" header="Semesters Left" sortable></Column>
-      <Column field="num_trips_assigned" header="Num Trips Assigned" sortable></Column>
-      <Column field="preferred_co_leaders" header="Preferred Co-Leaders" sortable></Column>
-      <Column field="reliability_score" header="Reliability Score" sortable></Column>
-      <Column field="mountain_biking_role" header="Mountain Biking Roll" sortable></Column>
-      <Column field="overnight_role" header="Overnight Role" sortable></Column>
-      <Column field="sea_kayaking_role" header="Sea Kayaking Role" sortable></Column>
-      <Column field="spelunking_Role" header="Spelunking Role" sortable></Column>
-      <Column field="surfing_role" header="Surfing Role" sortable></Column>
-      <Column field="watersports_role" header="Watersports Role" sortable></Column>
-      </DataTable>
-      </div>
-      </div>
-
-      <div className='mt-5 App'>
-
-      <h1 className='text-xs font-bold mb-1 ml-2'>Filter: </h1>
-      <InputText 
-      className="ml-1 input input-bordered input-secondary input-sm max-w-xs"
-      onInput={(e) => 
-      setFilters({
-        global: {value: e.target.value, matchMode: FilterMatchMode.CONTAINS},
-      })
-      }
+      <TripDataTable 
+        tripData={tripData} 
+        filters={filters} 
+        tripheader={tripheader} 
+        tripfooter={tripfooter} 
+      />
+      <TripLeaderDataTable 
+        tripLeaderData={tripLeaderData} 
+        filters={filters} 
+        leadheader={leadheader} 
+        leadfooter={leadfooter} 
+      />
+      <TripPreferenceDataTable 
+        tripPreferenceData={tripPreferenceData} 
+        filters={filters} 
+        setFilters={setFilters} 
+        prefheader={prefheader} 
+        preffooter={preffooter} 
       />
 
-      <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}> 
-      <DataTable value={tripPreferenceData} sortMode="multiple" filters={filters}
-      paginator
-      rows={10}
-      rowsPerPageOptions={[10,20,30]}
-      className="table table-sm"
-      header={prefheader}
-      footer={preffooter}
-      style={{width: '80%'}} 
-      >
-      <Column field="trip_leader_id" header="Trip Leader ID" sortable></Column>
-      <Column field="trip_leader_name" header="Name" sortable></Column>
-      <Column field="trip_id" header="Trip ID" sortable></Column>
-      <Column field="trip_name" header="Name" sortable></Column>
-      <Column field="preference" header="Preference" sortable></Column>
-      </DataTable>
-      </div>
-      </div>
       </div>
       <div className="mt-10"></div>
       <div className="flex justify-center pt-4">
