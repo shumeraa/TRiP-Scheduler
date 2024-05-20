@@ -1,8 +1,35 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
+import { InputText } from 'primereact/inputtext';
+import { FilterMatchMode } from 'primereact/api';
 
-const TripLeaderDataTable = ({ tripLeaderData, filters, leadheader, leadfooter }) => {
+const TripLeaderDataTable = ({ tripLeaderData}) => {
+
+const leadheader = <h1 className="mb-5 text-3xl text-center font-bold">Trip Leader Data</h1>;
+const leadfooter = <p className='ml-1'>Total Leaders: {tripLeaderData ? tripLeaderData.length : 0}</p>;
+
+const [filters, setFilters] = useState({
+    global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+  });
+
+const header = (
+    <div style={{ display: 'flex', flexDirection: 'column' }}>
+        {leadheader}
+        <div style={{ display: 'flex', alignItems: 'center', marginTop: '10px' }}>
+        <h1 className='text-xs font-bold mb-1 mr-2'>Filter: </h1>
+        <InputText 
+            className="ml-1 input input-bordered input-secondary input-sm max-w-xs"
+            onInput={(e) => 
+            setFilters({
+                global: { value: e.target.value, matchMode: FilterMatchMode.CONTAINS },
+            })
+            }
+        />
+        </div>
+    </div>
+    );
+
   return (
     <div className='mt-5 App'>
       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
@@ -14,7 +41,7 @@ const TripLeaderDataTable = ({ tripLeaderData, filters, leadheader, leadfooter }
           rows={10}
           rowsPerPageOptions={[10, 20, 30]}
           className="table table-sm"
-          header={leadheader}
+          header={header}
           footer={leadfooter}
           style={{ width: '80%' }} 
         >

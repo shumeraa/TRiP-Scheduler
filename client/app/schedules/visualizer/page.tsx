@@ -20,18 +20,13 @@ import { fetchData, resetDatabase, sendDataToBackend } from './utils/api';
     const [tripData, setTripData] = useState([]);
     const [tripLeaderData, setTripLeaderData] = useState([]);
     const [tripPreferenceData, setTripPreferenceData] = useState([]);
-    const [filters, setFilters] = useState({
-      global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-    });
+
   
-    const tripheader = <h1 className="mb-5 text-3xl text-center font-bold">Trip Data</h1>;
-    const tripfooter = <p className='ml-1'>Total Trips: {tripData ? tripData.length : 0}</p>;
+
   
-    const leadheader = <h1 className="mb-5 text-3xl text-center font-bold">Trip Leader Data</h1>;
-    const leadfooter = <p className='ml-1'>Total Leaders: {tripLeaderData ? tripLeaderData.length : 0}</p>;
+
   
-    const prefheader = <h1 className="mb-5 text-3xl text-center font-bold">Trip Preference Data</h1>;
-    const preffooter = <p className='ml-1'>Total Preferences: {tripPreferenceData ? tripPreferenceData.length : 0}</p>;
+   
   
     // Initial fetch on component mount
     useEffect(() => {
@@ -57,22 +52,13 @@ import { fetchData, resetDatabase, sendDataToBackend } from './utils/api';
 
       <TripDataTable 
         tripData={tripData} 
-        filters={filters} 
-        tripheader={tripheader} 
-        tripfooter={tripfooter} 
       />
       <TripLeaderDataTable 
         tripLeaderData={tripLeaderData} 
-        filters={filters} 
-        leadheader={leadheader} 
-        leadfooter={leadfooter} 
       />
+
       <TripPreferenceDataTable 
         tripPreferenceData={tripPreferenceData} 
-        filters={filters} 
-        setFilters={setFilters} 
-        prefheader={prefheader} 
-        preffooter={preffooter} 
       />
 
       </div>
