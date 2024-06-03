@@ -1,7 +1,7 @@
+"use client"; 
+
 import React from "react";
-import { MouseEvent } from "react";
 import { useState } from "react";
-import Link from "next/link";
 
 
 function Menu() {
@@ -14,11 +14,6 @@ function Menu() {
 
   return (
     <div className="flex justify-around items-center space-x-2">
-      {/* Button that links to file upload */}
-      <a href="/fileupload" className="btn btn-primary">
-        Start Here!
-      </a>
-
       {/* Dropdown Menu */}
       <div className={`dropdown ${isOpen ? 'dropdown-open' : ''}`}>
         <button tabIndex={0} className="btn btn-secondary" onClick={handleClick}>
