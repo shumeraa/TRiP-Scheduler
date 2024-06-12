@@ -239,5 +239,54 @@ def reset_database():
     trip_leader.delete_all_leaders()
     return jsonify({"success": True, "message": "Database reset successfully"})
 
+#Starting here
+
+UPLOAD_FOLDER = r'.\..\Example_Data'
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+# Ensure the upload folder exists
+if not os.path.exists(UPLOAD_FOLDER):
+    os.makedirs(UPLOAD_FOLDER)
+
+@app.route('/upload', methods=['POST'])
+def upload_files():
+    if not request.files:
+        return jsonify({'error': 'No file part'}), 400
+
+    file_container_files = []
+    separate_excel_files = []
+
+    for key in request.files:
+        if key.startswith('fileContainer_'):
+            file_container_files.append(request.files[key])
+        elif key.startswith('separateExcelFile_'):
+            separate_excel_files.append(request.files[key])
+        else:
+            return jsonify({'error': 'Wrong file names'}), 400
+            
+
+    if not file_container_files or not separate_excel_files:
+        return jsonify({'error': 'No selected files'}), 400
+
+    for file in file_container_files:
+        if file.filename == '':
+            return jsonify({'error': 'No selected file'}), 400
+        prefs_folder = os.path.join(app.config['UPLOAD_FOLDER'], 'prefs')
+        
+        filename = secure_filename(file.filename)
+        prefs_folder = os.path.join(app.config['UPLOAD_FOLDER'], 'prefs')
+        if not os.path.exists(prefs_folder):
+            print("Error: prefs folder does not exist.")
+        else:
+            file.save(os.path.join(prefs_folder, filename))
+
+    for file in separate_excel_files: 
+        if file.filename == '':
+            return jsonify({'error': 'No selected file'}), 400
+        filename = secure_filename(file.filename)
+        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+
+    return jsonify({'message': 'Files uploaded successfully'}), 200
+
 if __name__ == "__main__":
     app.run(debug=True)

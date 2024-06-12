@@ -1,78 +1,60 @@
-// FileUpload.js
-"use client";
+"use client"; 
 
-import React, { useState } from "react";
-import axios from "axios";
-import Link from "next/link";
+import React, { useState } from 'react';
+import axios from 'axios';
 
 const FileUpload = () => {
-  const [guideFile, setGuideFile] = useState(null);
-  const [tripPrefFiles, setTripPrefFiles] = useState([]);
-  const [uploaded, setUploaded] = useState(false);
+  const [fileContainer, setFileContainer] = useState([]);
+  const [separateExcelFiles, setSeparateExcelFiles] = useState([]);
 
-  const handleFileChange = (event, fileType) => {
-    const uploadedFiles = event.target.files;
-    if (fileType === "guide") {
-      setGuideFile(uploadedFiles[0]);
-    } else if (fileType === "tripPref") {
-      setTripPrefFiles(Array.from(uploadedFiles));
-    }
+  const handleFileContainerChange = (e) => {
+    console.log('File container selected:', e.target.files);
+    setFileContainer(Array.from(e.target.files));
+  };
+
+  const handleSeparateExcelFilesChange = (e) => {
+    console.log('Separate Excel files selected:', e.target.files);
+    setSeparateExcelFiles(Array.from(e.target.files));
   };
 
   const handleUpload = async () => {
+    if (fileContainer.length === 0 || separateExcelFiles.length === 0) {
+      console.error('Files not selected');
+      return;
+    }
+
+    const formData = new FormData();
+    fileContainer.forEach((file, index) => {
+      formData.append(`fileContainer_${index}`, file);
+    });
+    separateExcelFiles.forEach((file, index) => {
+      formData.append(`separateExcelFile_${index}`, file);
+    });
+
+    // Debugging: Log the form data entries
+    for (let pair of formData.entries()) {
+      console.log(`${pair[0]}: ${pair[1].name}`);
+    }
+
     try {
-      const formData = new FormData();
-      formData.append("guide_file", guideFile);
-      tripPrefFiles.forEach((file, index) => {
-        formData.append(`trip_pref_file_[${index}]`, file);
+      const response = await axios.post('http://localhost:5000/upload', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
       });
-      const response = await axios.post("http://localhost:5000/upload", formData);
-      console.log(response.data);
-      setUploaded(true);
+      console.log('Upload successful', response.data);
     } catch (error) {
-      console.error("Error uploading files:", error);
+      console.error('Error uploading files', error);
     }
   };
 
   return (
-    <div className="flex flex-col items-center mt-20">
-      <h1 className="mb-10 text-4xl font-bold">Upload Files Here!</h1>
-      <div className="mb-5">
-        <label className="flex flex-col items-center">
-          <span className="font-bold mb-2">Trip Preferences</span>
-          <input
-            type="file"
-            className="file-input file-input-bordered"
-            accept=".xlsx"
-            onChange={(e) => handleFileChange(e, "tripPref")}
-            multiple
-          />
-        </label>
-        <button
-          className="btn btn-outline btn-default mt-4"
-          onClick={handleUpload}
-        >
-          Upload Files
-        </button>
-        {uploaded && <p className="text-green-500 mt-2">Files uploaded successfully!</p>}
-      </div>
-      <div className="mb-5">
-        <label className="flex flex-col items-center">
-          <span className="font-bold mb-2">Lead/Assistant Guide Status</span>
-          <input
-            type="file"
-            className="file-input file-input-bordered"
-            accept=".xlsx"
-            onChange={(e) => handleFileChange(e, "guide")}
-          />
-        </label>
-        <button
-          className="btn btn-outline btn-default mt-4"
-          onClick={handleUpload}
-        >
-          Upload File
-        </button>
-        {uploaded && <p className="text-green-500 mt-2">File uploaded successfully!</p>}
+    <div>
+      <h2>Upload Files</h2>
+      <input type="file" webkitdirectory="" directory="" accept=".xlsx" multiple onChange={handleFileContainerChange} />
+      <input type="file" accept=".xlsx,.xls" multiple onChange={handleSeparateExcelFilesChange} />
+      <div>
+        <button className="btn btn-wide btn-primary" onClick={handleUpload}>Upload</button>
       </div>
     </div>
   );

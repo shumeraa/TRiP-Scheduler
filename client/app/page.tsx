@@ -15,8 +15,8 @@ export default function Home() {
             <div>
               <Menu />
             </div>
-            <div className="mt-5">
-              <FileUpload /> {/* Adding the FileUpload component */}
+            <div className="mt-20">
+              <FileUpload/>
             </div>
           </div>
         </div>
