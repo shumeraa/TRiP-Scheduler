@@ -6,6 +6,7 @@ from flask_cors import CORS
 import sqlite3
 import json
 from werkzeug.utils import secure_filename
+import shutil
 
 app = Flask(__name__)
 CORS(app)
@@ -265,24 +266,25 @@ def upload_files():
             return jsonify({'error': 'Wrong file names'}), 400
             
 
-    if not file_container_files or not separate_excel_files:
+    if not file_container_files and not separate_excel_files:
         return jsonify({'error': 'No selected files'}), 400
+    else:
+        # Clear the upload folder
+        shutil.rmtree(UPLOAD_FOLDER)
+        os.makedirs(UPLOAD_FOLDER)
 
     for file in file_container_files:
-        if file.filename == '':
-            return jsonify({'error': 'No selected file'}), 400
         prefs_folder = os.path.join(app.config['UPLOAD_FOLDER'], 'prefs')
         
         filename = secure_filename(file.filename)
         prefs_folder = os.path.join(app.config['UPLOAD_FOLDER'], 'prefs')
         if not os.path.exists(prefs_folder):
-            print("Error: prefs folder does not exist.")
-        else:
-            file.save(os.path.join(prefs_folder, filename))
+            print("prefs folder does not exist. Creating now...")
+            os.makedirs(prefs_folder)
+        file.save(os.path.join(prefs_folder, filename))
+        print(f"Saved file {filename} to prefs folder")
 
     for file in separate_excel_files: 
-        if file.filename == '':
-            return jsonify({'error': 'No selected file'}), 400
         filename = secure_filename(file.filename)
         file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
 

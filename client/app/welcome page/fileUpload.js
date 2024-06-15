@@ -18,7 +18,7 @@ const FileUpload = () => {
   };
 
   const handleUpload = async () => {
-    if (fileContainer.length === 0 || separateExcelFiles.length === 0) {
+    if (fileContainer.length === 0 && separateExcelFiles.length === 0) {
       console.error('Files not selected');
       return;
     }
@@ -50,10 +50,10 @@ const FileUpload = () => {
 
   return (
     <div>
-      <h2>Upload Files</h2>
-      <input type="file" webkitdirectory="" directory="" accept=".xlsx" multiple onChange={handleFileContainerChange} />
+        <h2 style={{ fontSize: '2rem', marginBottom: '40px' }}>Upload Files</h2>
+      <input type="file" webkitdirectory="" directory="" accept=".xlsx" multiple onChange={handleFileContainerChange} style={{ marginRight: '20px' }}/>
       <input type="file" accept=".xlsx,.xls" multiple onChange={handleSeparateExcelFilesChange} />
-      <div>
+      <div style={{ marginTop: '40px' }}>
         <button className="btn btn-wide btn-primary" onClick={handleUpload}>Upload</button>
       </div>
     </div>
