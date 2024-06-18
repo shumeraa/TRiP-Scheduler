@@ -1,5 +1,4 @@
-# TripPrefVisualizer &middot; [![Build Status](https://img.shields.io/travis/npm/npm/latest.svg?style=flat-square)](https://travis-ci.org/npm/npm) 
-> Additional information or tag line
+# TripPrefVisualizer 
 
 A developer's guide to getting started!
 
@@ -58,26 +57,3 @@ Here is a beetle for good luck!
    /\  |  /\
    | `.:.' |
 ```
-
-## Developing 
-
-### What to do with bugs
-```shell
-                      _                        
-                      \`*-.                    
-                       )  _`-.                 
-                      .  : `. .                
-                      : _   '  \               
-                      ; *` _.   `*-._          
-                      `-.-'          `-.       
-                        ;       `       `.     
-                        :.       .        \    
-                        . \  .   :   .-'   .   
-                        '  `+.;  ;  '      :   
-                        :  '  |    ;       ;-. 
-                        ; '   : :`-:     _.`* ;
-               [bug] .*' /  .*' ; .*`- +'  `*' 
-                     `*-*   `*-*  `*-*'        
-Squash them!!
-```
-- Create a detailed issue on GitHub including how to replicate and potential causes/fixes.
