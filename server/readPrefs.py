@@ -19,7 +19,10 @@ def readInPrefs(prefsSheet, prefFilePath, messages):
     """
     try:
         # Find the first column with the value "trip" in the first 5 rows
+        foundTrip = False
         for column in prefsSheet.columns:
+            if foundTrip:
+                break
             for row in range(5):
                 cell_value = str(prefsSheet.at[row, column])
                 if re.search(
@@ -27,10 +30,13 @@ def readInPrefs(prefsSheet, prefFilePath, messages):
                 ):  # Use regex for case-insensitive search
                     tripCol = column
                     tripRow = row
-                    break  # Exit the row loop
+                    foundTrip = True  # Exit the row loop
+                    break
 
         # Now we have the column and row of the cell with "trip" in it
         print(f"Trip column: {tripCol}, Trip row: {tripRow}")
+        
+        
 
         if not tripCol:
             messages.append(
@@ -41,7 +47,7 @@ def readInPrefs(prefsSheet, prefFilePath, messages):
 
     except Exception as e:
         messages.append(
-            "Error: The trip leader prefs could not be read for"
+            "Error: The trip leader prefs could not be read for "
             + f"{prefFilePath}. Exception: {str(e)}"
         )
 
