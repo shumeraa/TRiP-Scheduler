@@ -35,12 +35,30 @@ def readInPrefs(prefsSheet, prefFilePath, messages):
 
         # Now we have the column and row of the cell with "trip" in it
         print(f"Trip column: {tripCol}, Trip row: {tripRow}")
-        
-        
+
+        prefsDict = {}
+        tripID = 0
+        tripRow += 1  # Move to the next row to get the first trip
+
+        # while the value of the cell is not empty
+        while prefsSheet.iloc[tripRow, tripCol] is not None:
+            pref = prefsSheet.iloc[tripRow, tripCol + 1]
+
+            if not pref:
+                messages.append(
+                    f"Error: The prefs sheet in {prefFilePath} does "
+                    + f"not contain a preference for trip {prefsSheet.iloc[tripRow, tripCol]}."
+                )
+                return None
+
+            prefsDict[tripID] = pref
+            tripRow += 1
+
+        print(prefsDict)
 
         if not tripCol:
             messages.append(
-                f"Error: The prefs sheet in {prefFilePath} does"
+                f"Error: The prefs sheet in {prefFilePath} does "
                 + "not contain a column with 'trip' in the first 5 rows."
             )
             return None
@@ -52,4 +70,10 @@ def readInPrefs(prefsSheet, prefFilePath, messages):
         )
 
 
-# def find
+""" 
+TODO: IF RETURN NONE TO NOT GO TO NEXT FILE
+Assumes the TRiP column's first row in the column is labeled TRiP
+Assumes the column next to the TRiP column is the prefs column
+Assumes the TRiPs are in the exact same order in every prefs sheet
+    and in the same order as the info sheet 
+    """
