@@ -4,6 +4,26 @@ import re
 
 
 def readInTripLeaderInfo(leaderInfoSheet, prefFilePath, messages):
+    """
+    Reads and processes trip leader information from a given Excel sheet.
+
+    This function searches for specific columns by name within the first 5 rows of the leaderInfoSheet,
+    extracts relevant information (name, UFID, semesters left, trips assigned, dropped, and picked up, and co-leads),
+    calculates a reliability score, and returns a dictionary containing this information. If any required information
+    is missing, or if an error occurs during processing, an appropriate error message is appended to the messages list
+    and the function returns None.
+
+    Parameters:
+    - leaderInfoSheet (DataFrame): The pandas DataFrame containing the trip leader information.
+    - prefFilePath (str): The file path of the preferences file, used for error messaging.
+    - messages (list): A list to which error messages will be appended.
+
+    Returns:
+    - dict: A dictionary containing the extracted information and calculated reliability score if successful, None otherwise.
+
+    Raises:
+    - Exception: Captures and logs any exception that occurs during the processing of the trip leader information.
+    """
     try:
         # Find the first column with the value "name" in the first 5 rows
         for column in leaderInfoSheet.columns:
@@ -64,6 +84,27 @@ def readInTripLeaderInfo(leaderInfoSheet, prefFilePath, messages):
 
 
 def findValue(df, column, regex_string, threeCells=False):
+    """
+    Searches for a value in a DataFrame column matching a regex pattern and optionally returns adjacent values.
+
+    This function searches a specified column in a pandas DataFrame for a value that matches a given regex pattern.
+    If a match is found, the function returns the value in the next column or, if threeCells is True, values in the
+    next three columns as a list. If no match is found, the function returns None.
+
+    Parameters:
+    - df (DataFrame): The pandas DataFrame to search.
+    - column (str): The name of the column to search for the regex pattern.
+    - regex_string (str): The regex pattern to search for within the specified column.
+    - threeCells (bool, optional): If True, returns a list of values from the next three columns adjacent to the found value.
+                                    Defaults to False.
+
+    Returns:
+    - The value found in the next column, a list of values from the next three columns if threeCells is True, or None if no match is found.
+
+    Note:
+    - This function prints the values found for the regex_string if threeCells is True.
+    """
+    
     try:
         # Find the index of the given column
         col_index = df.columns.get_loc(column)

@@ -1,4 +1,5 @@
 import re
+import pandas as pd
 
 
 def readInPrefs(prefsSheet, prefFilePath, messages):
@@ -20,6 +21,8 @@ def readInPrefs(prefsSheet, prefFilePath, messages):
     try:
         # Find the first column with the value "trip" in the first 5 rows
         foundTrip = False
+        tripCol = None
+        tripRow = None
         for column in prefsSheet.columns:
             if foundTrip:
                 break
@@ -28,41 +31,43 @@ def readInPrefs(prefsSheet, prefFilePath, messages):
                 if re.search(
                     r"trip", cell_value, re.IGNORECASE
                 ):  # Use regex for case-insensitive search
-                    tripCol = column
+                    tripCol = prefsSheet.columns.get_loc(column)  # Get the column index
                     tripRow = row
                     foundTrip = True  # Exit the row loop
                     break
-
-        # Now we have the column and row of the cell with "trip" in it
-        print(f"Trip column: {tripCol}, Trip row: {tripRow}")
-
-        prefsDict = {}
-        tripID = 0
-        tripRow += 1  # Move to the next row to get the first trip
-
-        # while the value of the cell is not empty
-        while prefsSheet.iloc[tripRow, tripCol] is not None:
-            pref = prefsSheet.iloc[tripRow, tripCol + 1]
-
-            if not pref:
-                messages.append(
-                    f"Error: The prefs sheet in {prefFilePath} does "
-                    + f"not contain a preference for trip {prefsSheet.iloc[tripRow, tripCol]}."
-                )
-                return None
-
-            prefsDict[tripID] = pref
-            tripRow += 1
-
-        print(prefsDict)
-
-        if not tripCol:
+                
+        if tripCol is None or tripRow is None:
             messages.append(
                 f"Error: The prefs sheet in {prefFilePath} does "
                 + "not contain a column with 'trip' in the first 5 rows."
             )
             return None
 
+        # Now we have the column and row of the cell with "trip" in it
+
+        prefsDict = {}
+        tripID = 0
+        tripRow += 1  # Move to the next row to get the first trip
+
+        # while the value of the cell is not empty
+        while tripRow < len(prefsSheet) and not pd.isnull(
+            prefsSheet.iloc[tripRow, tripCol]
+        ):
+            pref = prefsSheet.iloc[tripRow, tripCol + 1]
+
+            if pref is None:
+                messages.append(
+                    f"Error: The prefs sheet in {prefFilePath} does "
+                    + f"not contain a preference for the trip: {prefsSheet.iloc[tripRow, tripCol]}."
+                )
+                return None
+
+            prefsDict[tripID] = pref
+            tripRow += 1
+            tripID += 1
+
+        return prefsDict
+    
     except Exception as e:
         messages.append(
             "Error: The trip leader prefs could not be read for "
@@ -70,10 +75,10 @@ def readInPrefs(prefsSheet, prefFilePath, messages):
         )
 
 
-""" 
-TODO: IF RETURN NONE TO NOT GO TO NEXT FILE
+"""
 Assumes the TRiP column's first row in the column is labeled TRiP
 Assumes the column next to the TRiP column is the prefs column
 Assumes the TRiPs are in the exact same order in every prefs sheet
     and in the same order as the info sheet 
+Assumes there is an empty row after the last trip
     """
