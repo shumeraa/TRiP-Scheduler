@@ -3,7 +3,7 @@ import pandas as pd
 import re
 
 from readPrefsTripLeaderInfo import *
-from readInData.readPrefsSheet import *
+from readPrefsSheet import *
 
 
 def readPrefFolder(prefsDirectoryPath):
@@ -123,5 +123,3 @@ Assumes the TRiPs are in the exact same order in every prefs sheet
     and in the same order as the info sheet 
 Assumes there is an empty row after the last trip
     """
-
-#def readStatusInfo()

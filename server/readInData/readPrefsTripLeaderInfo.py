@@ -102,7 +102,7 @@ def findValue(df, column, regex_string, threeCells=False):
     Note:
     - This function prints the values found for the regex_string if threeCells is True.
     """
-    
+
     try:
         # Find the index of the given column
         col_index = df.columns.get_loc(column)
@@ -122,7 +122,7 @@ def findValue(df, column, regex_string, threeCells=False):
                         next_col_value = df.iloc[row_index, col_index + i]
                         if pd.notna(next_col_value):
                             values.append(next_col_value)
-                print(f"Values for {regex_string}: {values}")
+                # print(f"Values for {regex_string}: {values}")
                 return values
             else:
                 # Return the value of the cell in the column to the right
