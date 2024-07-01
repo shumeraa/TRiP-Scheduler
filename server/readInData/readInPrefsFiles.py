@@ -2,7 +2,7 @@ import os
 import pandas as pd
 import re
 
-from readPrefsTripLeaderInfo import *
+from readPrefsTripLeaderInfoSheet import *
 from readPrefsSheet import *
 
 
@@ -73,9 +73,12 @@ def readPrefFile(prefFilePath, messages):
         if re.search(r"prefs", lowercase_sheetnames[0]):
             prefsIndex = 0
             leaderInfoIndex = 1
-        else:
+        elif re.search(r"prefs", lowercase_sheetnames[1]):
             prefsIndex = 1
             leaderInfoIndex = 0
+        else:
+            messages.append(f"Error: Could not find a sheet with 'prefs' in the name in {prefFilePath}.")
+            return False
 
         prefsSheet = pd.read_excel(prefFilePath, sheet_name=sheetNames[prefsIndex])
         leaderInfoSheet = pd.read_excel(
