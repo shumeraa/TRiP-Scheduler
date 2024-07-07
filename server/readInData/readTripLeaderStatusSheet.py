@@ -3,7 +3,50 @@ import pandas as pd
 
 
 def readStatusInfo(statusInfoSheet, statusFilePath, messages):
-    """ """
+    """
+    Reads and processes the status information of trip leaders from the Trip Leader Status sheet.
+
+    This function searches for a specific set of columns in the status information sheet,
+    validates the presence of expected column headers, and then iterates through each row
+    to compile a dictionary of trip leader statuses based on their UF ID. It handles various
+    errors such as missing columns or invalid status values and reports them through a message list.
+
+    Parameters:
+    - statusInfoSheet (DataFrame): The pandas DataFrame containing the status information sheet.
+    - statusFilePath (str): The file path of the Excel sheet being processed, used for error reporting.
+    - messages (list): A list to which error or status messages will be appended.
+
+    Returns:
+    - dict or None: A dictionary mapping UF IDs to their respective trip leader status dictionaries
+      if the sheet is processed successfully, or None if an error occurs.
+
+    Raises:
+    - Exception: Propagates any exceptions that occur during processing, with an error message appended to `messages`.
+    """
+    
+    statusCols = [
+        "UF ID",
+        "Class",
+        "Full Name",
+        "Overnight",
+        "Biking",
+        "Spelunking",
+        "Watersports",
+        "Surfing",
+        "Sea Kayaking",
+    ]
+
+    tripTypes = [
+        "Overnight",
+        "Biking",
+        "Spelunking",
+        "Watersports",
+        "Surfing",
+        "Sea Kayaking",
+    ]
+
+    possibleStatuses = ["LG", "I"]
+
     try:
         # Find the row and column with the value "uf" (as in UF ID) in the first 5 rows of every column until found
         foundStatus = False
@@ -15,7 +58,7 @@ def readStatusInfo(statusInfoSheet, statusFilePath, messages):
             for row in range(5):
                 cell_value = str(statusInfoSheet.at[row, column])
                 if re.search(
-                    r"uf", cell_value, re.IGNORECASE
+                    r"uf id", cell_value, re.IGNORECASE
                 ):  # Use regex for case-insensitive search
                     ufID_Col = statusInfoSheet.columns.get_loc(
                         column
@@ -27,16 +70,31 @@ def readStatusInfo(statusInfoSheet, statusFilePath, messages):
         if ufID_Col is None or ufID_Row is None:
             messages.append(
                 f"Error: The Trip Leader Status sheet in {statusFilePath} does "
-                + "not contain a column with 'uf' in the first 5 rows."
+                + "not contain a column with 'uf id' in the first 5 rows."
             )
             return None
 
         colHeaders = ufID_Col + 1  # to skip ufID
         colToHeaderDict = {}
 
-        while not pd.isnull(statusInfoSheet.iloc[ufID_Row, colHeaders]):
-            colToHeaderDict[colHeaders] = statusInfoSheet.iloc[ufID_Row, colHeaders]
-            colHeaders += 1
+        for i in range(len(statusCols) - 1):  # -1 because ufID is already accounted for
+            header = statusInfoSheet.iloc[ufID_Row, colHeaders]
+            if header in statusCols:
+                colToHeaderDict[colHeaders] = header
+                colHeaders += 1
+            elif header is None:
+                messages.append(
+                    f"Error: Ran into an empty value when verifying the column headers in the Trip Leader Status sheet. "
+                    + f"Make sure all column headers have the following names with no empty columns in between: {statusCols}"
+                )
+                return None
+            else:
+                messages.append(
+                    f"Error: The column header '{header}' in the Trip Leader Status sheet "
+                    + f"is not recognized as a valid column header. "
+                    + f"Valid column headers are: {statusCols}"
+                )
+                return None
 
         statusDict = {}
         currentRow = ufID_Row + 1  # Skip the row with the headers
@@ -46,7 +104,17 @@ def readStatusInfo(statusInfoSheet, statusFilePath, messages):
 
             # Go through every column and assign the values from the row to the dictionary
             for colNum, colName in colToHeaderDict.items():
-                tripLeaderStatusDict[colName] = statusInfoSheet.iloc[currentRow, colNum]
+                if colName in tripTypes:
+                    cellValue = statusInfoSheet.iloc[currentRow, colNum]
+                    if cellValue in possibleStatuses or pd.isnull(cellValue):
+                        tripLeaderStatusDict[colName] = cellValue
+                    else:
+                        messages.append(
+                            f"Error: The value '{cellValue}' in the "
+                            + f"'{colName}' column for UF ID '{statusInfoSheet.iloc[currentRow, ufID_Col]}' "
+                            + "is not a valid trip status. Valid statuses are: 'LG', 'I', or an empty cell."
+                        )
+                        return None
 
             # Add the dictionary to the status dictionary
             # The key is the UF ID, the value is the dictionary of the trip leader's status
@@ -65,4 +133,4 @@ def readStatusInfo(statusInfoSheet, statusFilePath, messages):
         )
 
 
-# UF ID needs to be the column in Trip Leader info sheet
+# UF ID needs to be the first column in Trip Leader info sheet
