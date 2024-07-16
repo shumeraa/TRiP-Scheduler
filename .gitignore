@@ -2,3 +2,4 @@ server/venv/
 electron-app/node_modules
 Example_Data
 __pycache__
+toDO.md

@@ -23,32 +23,32 @@ def readStatusInfo(statusInfoSheet, statusFilePath, messages):
     Raises:
     - Exception: Propagates any exceptions that occur during processing, with an error message appended to `messages`.
     """
-    
+
     statusCols = [
-        "UF ID",
-        "Class",
-        "Full Name",
-        "Overnight",
-        "Biking",
-        "Spelunking",
-        "Watersports",
-        "Surfing",
-        "Sea Kayaking",
+        "uf id",
+        "class",
+        "full name",
+        "overnight",
+        "biking",
+        "spelunking",
+        "watersports",
+        "surfing",
+        "sea kayaking",
     ]
 
     tripTypes = [
-        "Overnight",
-        "Biking",
-        "Spelunking",
-        "Watersports",
-        "Surfing",
-        "Sea Kayaking",
+        "overnight",
+        "biking",
+        "spelunking",
+        "watersports",
+        "surfing",
+        "sea kayaking",
     ]
 
     possibleStatuses = ["LG", "I"]
 
     try:
-        # Find the row and column with the value "uf" (as in UF ID) in the first 5 rows of every column until found
+        # Find the row and column with the value "uf id" in the first 5 rows of every column until found
         foundStatus = False
         ufID_Col = None
         ufID_Row = None
@@ -69,7 +69,7 @@ def readStatusInfo(statusInfoSheet, statusFilePath, messages):
 
         if ufID_Col is None or ufID_Row is None:
             messages.append(
-                f"Error: The Trip Leader Status sheet in {statusFilePath} does "
+                f"Error: The Trip Leader Status sheet in the TripsAndLeaderStatusInfo document in {statusFilePath} does "
                 + "not contain a column with 'uf id' in the first 5 rows."
             )
             return None
@@ -78,19 +78,19 @@ def readStatusInfo(statusInfoSheet, statusFilePath, messages):
         colToHeaderDict = {}
 
         for i in range(len(statusCols) - 1):  # -1 because ufID is already accounted for
-            header = statusInfoSheet.iloc[ufID_Row, colHeaders]
+            header = statusInfoSheet.iloc[ufID_Row, colHeaders].lower()
             if header in statusCols:
                 colToHeaderDict[colHeaders] = header
                 colHeaders += 1
             elif header is None:
                 messages.append(
-                    f"Error: Ran into an empty value when verifying the column headers in the Trip Leader Status sheet. "
+                    f"Error: Ran into an empty value when verifying the column headers in the Trip Leader Status sheet in the TripsAndLeaderStatusInfo document. "
                     + f"Make sure all column headers have the following names with no empty columns in between: {statusCols}"
                 )
                 return None
             else:
                 messages.append(
-                    f"Error: The column header '{header}' in the Trip Leader Status sheet "
+                    f"Error: The column header '{header}' in the Trip Leader Status sheet in the TripsAndLeaderStatusInfo document"
                     + f"is not recognized as a valid column header. "
                     + f"Valid column headers are: {statusCols}"
                 )
@@ -112,9 +112,22 @@ def readStatusInfo(statusInfoSheet, statusFilePath, messages):
                         messages.append(
                             f"Error: The value '{cellValue}' in the "
                             + f"'{colName}' column for UF ID '{statusInfoSheet.iloc[currentRow, ufID_Col]}' "
-                            + "is not a valid trip status. Valid statuses are: 'LG', 'I', or an empty cell."
+                            + "is not a valid trip status in the TripsAndLeaderStatusInfo document. Valid statuses are: 'LG', 'I', or an empty cell."
                         )
                         return None
+                else:
+                    # The column is not a trip type column
+                    cellValue = statusInfoSheet.iloc[currentRow, colNum]
+
+                    if pd.isnull(cellValue):
+                        messages.append(
+                            f"Error: The value in the '{colName}' column for UF ID: "
+                            + f"{statusInfoSheet.iloc[currentRow, ufID_Col]} "
+                            + "was empty in the TripsAndLeaderStatusInfo document. Please enter a value for this cell."
+                        )
+                        return None
+                    else:
+                        tripLeaderStatusDict[colName] = cellValue
 
             # Add the dictionary to the status dictionary
             # The key is the UF ID, the value is the dictionary of the trip leader's status
@@ -128,7 +141,7 @@ def readStatusInfo(statusInfoSheet, statusFilePath, messages):
 
     except Exception as e:
         messages.append(
-            "Error: The trip leader prefs could not be read for "
+            "Error: The trip leader status in the TripsAndLeaderStatusInfo document could not be read for "
             + f"{statusFilePath}. Exception: {str(e)}"
         )
 

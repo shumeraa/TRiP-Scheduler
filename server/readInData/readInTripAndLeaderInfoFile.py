@@ -2,8 +2,8 @@ import os
 import pandas as pd
 import re
 
-from readTripLeaderStatusSheet import *
-from readTripsInfoSheet import *
+from readLeadersStatusSheet import *
+from readTripInfoSheet import *
 
 
 def readPrefFolder(excelFilePath):
@@ -18,32 +18,34 @@ def readPrefFolder(excelFilePath):
             sheetNames = df.sheet_names
             lowercase_sheetnames = [name.lower() for name in sheetNames]
 
-            if re.search(r"prefs", lowercase_sheetnames[0]):
-                prefTemplateIndex = 0
-                statusIndex = 1
-            elif re.search(r"prefs", lowercase_sheetnames[1]):
-                prefTemplateIndex = 1
-                statusIndex = 0
+            firstSheetName = r"trip info"  # keep lowercase
+
+            if re.search(firstSheetName, lowercase_sheetnames[0]):
+                tripInfoIndex = 0
+                tripLeaderInfoIndex = 1
+            elif re.search(firstSheetName, lowercase_sheetnames[1]):
+                tripInfoIndex = 1
+                tripLeaderInfoIndex = 0
             else:
                 messages.append(
-                    "Error: Could not find a sheet with 'prefs' in the name in TripsAndLeaderStatusInfo."
+                    "Error: Could not find a sheet with 'Trip Info' in the name in TripsAndLeaderStatusInfo."
                 )
                 return messages
 
             tripInfoSheet = pd.read_excel(
-                excelFilePath, sheet_name=sheetNames[prefTemplateIndex]
+                excelFilePath, sheet_name=sheetNames[tripInfoIndex]
             )
-            statusSheet = pd.read_excel(
-                excelFilePath, sheet_name=sheetNames[statusIndex]
+            tripLeaderInfo = pd.read_excel(
+                excelFilePath, sheet_name=sheetNames[tripLeaderInfoIndex]
             )
 
-            statusData = readStatusInfo(statusSheet, excelFilePath, messages)
+            statusData = readStatusInfo(tripLeaderInfo, excelFilePath, messages)
             if statusData is None:
                 return messages
 
-            # tripInfoData = readInPrefs(prefsSheet, excelFilePath, messages)
-            # if tripInfoData is None:
-            #     return False
+            tripInfoData = readTripInfo(tripInfoSheet, excelFilePath, messages)
+            if tripInfoData is None:
+                return messages
 
             messages.append("The file was read successfully.")
             return messages
