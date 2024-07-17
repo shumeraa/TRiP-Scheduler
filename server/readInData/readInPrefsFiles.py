@@ -114,15 +114,7 @@ for message in output:
 
 """ 
 RULES:
-it can only read xlsx files
-there can only be two sheets in the prefs file
-the prefs sheet has "prefs" in the name, the trip leader info does not have "prefs" in the name
-the first non-empty column in the trip leader info sheet must
 
 TODO: Clear database before adding new data
-Assumes the TRiP column's first row in the column is labeled TRiP
-Assumes the column next to the TRiP column is the prefs column
-Assumes the TRiPs are in the exact same order in every prefs sheet
-    and in the same order as the info sheet 
-Assumes there is an empty row after the last trip
-    """
+
+"""
