@@ -35,7 +35,7 @@ def readInPrefs(prefsSheet, prefFilePath, messages):
                     tripRow = row
                     foundTrip = True  # Exit the row loop
                     break
-                
+
         if tripCol is None or tripRow is None:
             messages.append(
                 f"Error: The prefs sheet in {prefFilePath} does "
@@ -49,16 +49,20 @@ def readInPrefs(prefsSheet, prefFilePath, messages):
         tripID = 0
         tripRow += 1  # Move to the next row to get the first trip
 
-        # while the value of the cell is not empty
+        # while the value of the trip cell is not empty
         while tripRow < len(prefsSheet) and not pd.isnull(
             prefsSheet.iloc[tripRow, tripCol]
         ):
             pref = prefsSheet.iloc[tripRow, tripCol + 1]
 
             if pref is None:
+                # assume an empty preference is a 0
+                pref = 0
+
+            if not isinstance(pref, int) or pref > 5 or pref < 0:
                 messages.append(
-                    f"Error: The prefs sheet in {prefFilePath} does "
-                    + f"not contain a preference for the trip: {prefsSheet.iloc[tripRow, tripCol]}."
+                    f"Error: For the prefs sheet in {prefFilePath}, "
+                    + f" '{pref}' is not a valid rating for the trip: {prefsSheet.iloc[tripRow, tripCol]}."
                 )
                 return None
 
@@ -67,7 +71,7 @@ def readInPrefs(prefsSheet, prefFilePath, messages):
             tripID += 1
 
         return prefsDict
-    
+
     except Exception as e:
         messages.append(
             "Error: The trip leader prefs could not be read for "
