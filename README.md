@@ -1,5 +1,3 @@
-# TripPrefVisualizer 
-
 https://github.com/user-attachments/assets/b16cc42c-37a6-4387-8069-cee329a2f8b9
 
 ## Welcome to TRiP-Scheduler
