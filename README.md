@@ -1,6 +1,15 @@
 # TripPrefVisualizer 
 
-A developer's guide to getting started!
+https://github.com/user-attachments/assets/b16cc42c-37a6-4387-8069-cee329a2f8b9
+
+## Welcome to TRiP-Scheduler
+This project was developed for the Center of Outdoor Recreation and Education at the University of Florida to streamline and automate the trip selection process.
+
+The video above showcases the three core functionalities of the system:
+
+1. Document Processing: Efficiently reads and imports all necessary documents.
+2. Data Visualization: Displays the imported data in a clear, concise, and organized format for easy review.
+3. Schedule Generation: Automatically generates an optimized trip schedule based on the input data.
 
 ## Installing / Getting started
 
